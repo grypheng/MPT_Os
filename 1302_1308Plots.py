@@ -6,10 +6,14 @@ Created on Mon Apr  4 17:42:52 2022
 @author: gryphengoss
 """
 
-#%%
+#%% Import data
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib import style
+from matplotlib.patches import ConnectionPatch
+import matplotlib.pyplot
+import numpy as np
 
 data = "/Users/gryphengoss/Desktop/IODP_1302_1308/IODP-Master_Goss.xlsx"
 
@@ -28,13 +32,16 @@ d18O = IODPdata.parse('d18O')
 newsamps = IODPdata.parse('Current_Requests')
 
 #create variables
-d18Oval = d18O['d18Ovaluepermil']
+#d18Oval = d18O.iloc[:,1] If the below line does work locate using integer position
+d18Oval = d18O['d18Ovalpm']
 d18Oage = d18O['d18O age']
 
 ar1302a = ar1302['Age Increment']
 ar1302os = ar1302['187Os/188Os']
 ch1302a = ch1302['Age Increment']
 ch1302os = ch1302['187Os/188Os']
+ch1302ppt = ch1302['192Os(ppt)']
+ch1308ppt = ch1308['192Os(ppt)']
 
 ar1308a = ar1308['Age Increment']
 ar1308os = ar1308['187Os/188Os']
@@ -47,7 +54,7 @@ new1302os = newsamps['1302Placer']
 new1302a = newsamps['1302Age']
 
 
-#%%
+#%% only 1302 and d18O
 #Only 1302 plot ###############################################################
 ax111 = plt.subplot(111)
 ax111.plot(ch1302a,ch1302os, color='black', marker = '.', label = "1302 Chromic")     
@@ -68,7 +75,7 @@ plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
 
 
-#%%
+#%% only 1308 and d18O
 #Only 1308 plot ###############################################################
 ax222 = plt.subplot(111)
 ax222.plot(ch1308a,ch1308os, color='black', marker = '.', label = "1308 Chromic")
@@ -91,7 +98,7 @@ plt.show()
 
 
 
-#%%
+#%% 3 Rows: 1302 1308 and d18O all stacked
 #Stack of all three plots #####################################################
 
 ax1 = plt.subplot(311)
@@ -444,7 +451,7 @@ plt.gca().add_patch(rect4)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
 
-#%%
+#%% failed attempt at ratio vs 192
 from numpy import mean
 from numpy import std
 from numpy.random import randn
@@ -455,10 +462,8 @@ import scipy.stats
 from scipy.stats import pearsonr
 import seaborn as sns
 
-x = (3.89,3.39,3.5,4.31,3.88,3.88,3.88,4.9,5.05,4.8,4.75,4.68,4.75,4.79,4.79,4.77,4.64,4.5,4.4,
-     3.64,3.84,4.61,4.32,4.02,4.17,4.17,4.67,4.11,4.11,3.48,3.9,4.07,3.63,4.06,4.59)
+x = 1/ch1302ppt
 y = ch1302os
-
 
 
 
@@ -470,7 +475,7 @@ pyplot.show()
 
 
 
-#%%
+#%% 1302 d18O separate plots red and blue
 #Zones of red interglacial and blue glacial based on Os##################################
 
 ax1 = plt.subplot(211)
@@ -761,7 +766,7 @@ plt.gca().add_patch(rect4)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
 
-#%%
+#%% Line d18O and scatter Os 1302 red and blue-overlayed
 #Line d18O and scatter Os 1302
 #Zones of red interglacial and blue glacial based on Os##################################
 
@@ -776,7 +781,7 @@ plt.rc('font', **font)
 plt.ylabel('d18O (LR04)')
 #plt.title('IODP Site 1302 - Osmium Signature')
 ax1.set_ylim(5.5, 3) 
-ax1.set_xlim(570.5,879) 
+ax1.set_xlim(565,880) 
 ax1.set_ylabel('d18O (LR04)')
 ax2.set_ylabel('187Os / 188Os')
 ax1.set_xlabel('Age (ka)')
@@ -784,17 +789,17 @@ ax1.set_xlabel('Age (ka)')
 
 
 #MIS labels
-ax1.text(576,3.39,'MIS 15',size=15)
-ax1.text(630,5.2,'16',size=15)
-ax1.text(700,3.6,'17',size=15)
+ax1.text(600,3.45,'MIS 15',size=15)
+ax1.text(630,5.15,'16',size=15)
+ax1.text(700,3.55,'17',size=15)
 ax1.text(720,4.85,'18',size=15)
 ax1.text(782,3.5,'19',size=15)
 ax1.text(800,4.85,'20',size=15)
-ax1.text(862,3.4,'21',size=15)
+ax1.text(862,3.45,'21',size=15)
 ax1.text(871,4.8,'22',size=15)
 
 #Warming in red, cooling in blue
-left, bottom, width, height = (571.6, 0, 12.7, 2.5)
+left, bottom, width, height = (565, 0, 19.5, 2.5)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
                         #fill = False,
                         #color = "purple",
@@ -826,7 +831,7 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         facecolor = 'blue',
                         linewidth = 2)
 plt.gca().add_patch(rect4)
-left, bottom, width, height = (648.4, 0, 27.7, 2.5)
+left, bottom, width, height = (648.8, 0, 27.7, 2.5)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
                         #fill = False,
                         #color = "purple",
@@ -874,7 +879,7 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         facecolor = 'blue',
                         linewidth = 2)
 plt.gca().add_patch(rect4)
-left, bottom, width, height = (745, 0, 16.8, 2.5)
+left, bottom, width, height = (744.9, 0, 16.8, 2.5)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
                         #fill = False,
                         #color = "purple",
@@ -906,7 +911,7 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         facecolor = 'blue',
                         linewidth = 2)
 plt.gca().add_patch(rect4)
-left, bottom, width, height = (853.01, 0, 24.7, 2.5)
+left, bottom, width, height = (853.01, 0, 27, 2.5)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
                         #fill = False,
                         #color = "purple",
@@ -918,3 +923,229 @@ plt.gca().add_patch(rect4)
 
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
+#%% 5 columns: of d18o 1302 os/ppt and 1308 os/ppt
+
+ax1 = plt.subplot(151)
+ax1.plot(d18Oval,d18Oage, color='black', marker = '', label = "d18O")
+font = {'family' : 'normal',
+        'size'   : 12}
+plt.rc('font', **font)
+#plt.ylabel('d18O (LR04)')
+#plt.title('IODP Sites 1302 and 1308 - Osmium Signature')
+ax1.get_xaxis().set_visible(True)
+#ax1.set_ylim(5.5, 3) 
+ax1.legend()
+ax1.set_ylim(440,1300) 
+bbox=dict(boxstyle="round", alpha=0.1, color='white')
+plt.annotate('d18O', 
+             xy=(850, 5.25), size=14, color = 'black',
+             ha='center', va="center",bbox=bbox)
+
+
+ax2 = plt.subplot(152, sharey = ax1)
+ax2.plot(ch1302os,ch1302a, color='black', marker = '.', label = "1302 - Os ratio")   
+font = {'family' : 'normal',
+        'size'   : 12}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+#plt.ylabel('187Os / 188Os')
+ax2.legend()
+ax2.set_xlim(0,2.5)
+ax2.get_yaxis().set_visible(False)
+#plt.xlabel('Age (ka)')
+bbox=dict(boxstyle="round", alpha=0.1, color='white')
+
+
+ax3 = plt.subplot(153, sharey = ax1)
+ax3.plot(ch1302ppt,ch1302a, color='black', marker = '.', label = "1302 - 192 ppt")   
+font = {'family' : 'normal',
+        'size'   : 12}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+#plt.ylabel('187Os / 188Os')
+ax3.legend()
+ax3.set_xlim(0,55)
+ax3.get_yaxis().set_visible(False)
+#plt.xlabel('Age (ka)')
+bbox=dict(boxstyle="round", alpha=0.1, color='white')
+
+ax4 = plt.subplot(154, sharey = ax1)
+ax4.plot(ch1308os,ch1308a, color='black', marker = '.', label = "1308 - Os ratio")   
+font = {'family' : 'normal',
+        'size'   : 12}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+#plt.ylabel('187Os / 188Os')
+ax4.legend()
+ax4.set_xlim(0,2.5)
+ax4.get_yaxis().set_visible(False)
+#plt.xlabel('Age (ka)')
+bbox=dict(boxstyle="round", alpha=0.1, color='white')
+
+ax5 = plt.subplot(155, sharey = ax1)
+ax5.plot(ch1308ppt,ch1308a, color='black', marker = '.', label = "1308 - 192 ppt")   
+font = {'family' : 'normal',
+        'size'   : 12}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+#plt.ylabel('187Os / 188Os')
+ax5.legend()
+ax5.set_xlim(0,55)
+ax5.get_yaxis().set_visible(False)
+#plt.xlabel('Age (ka)')
+bbox=dict(boxstyle="round", alpha=0.1, color='white')
+
+
+plt.subplots_adjust(wspace=0.05, hspace=0)
+plt.show()
+
+#%% 3 columns: of d18o LR04, outset: 1302 and 1308
+
+fig = plt.figure(figsize=(7, 5))
+
+#d18O top plot
+ax1 = fig.add_subplot(3,1,1)
+ax1.spines["top"].set_color("white")
+ax1.spines["bottom"].set_color("grey")
+ax1.spines["left"].set_color("grey")
+ax1.spines["right"].set_color("grey")
+ax1.plot(d18Oage,d18Oval, color='black', marker = '', linewidth=0.75, label = "d18O")
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)
+plt.ylabel('d18O (LR04)')
+#plt.title('IODP Sites 1302 and 1308 - Osmium Signature')
+#ax1.get_xaxis().set_visible(False)
+ax1.set_ylim(5.5, 2) 
+ax1.invert_xaxis()
+ax1.set_xlim(2000,0) 
+bbox=dict(boxstyle="round", alpha=0.1, color='grey')
+left, bottom, width, height = (500, 5.25, 800, -2.3)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = False,
+                        color = "black",
+                        alpha = 0.3,
+                      #  facecolor = 'black'
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+#41ky-bars
+left, bottom, width, height = (695, 2.5, 450, -0.1)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = True,
+                        color = "black",
+                        alpha = 1,
+                        facecolor = 'black',
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+ax1.text(1035,2.3,'41 ky cycles',size=12)
+#100ky-bars
+left, bottom, width, height = (120, 2.5, 500, -0.1)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = True,
+                        color = "black",
+                        alpha = 1,
+                        facecolor = 'black',
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+ax1.text(500,2.3,'100 ky cycles',size=12)
+
+
+
+
+#1308 middle plot
+ax2 = fig.add_subplot(3,1,2)
+ax2.plot(ch1308a,ch1308os, color='black', marker = '.', linewidth=1,label = "1308")
+ax2.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+plt.ylabel('187Os / 188Os')
+#ax2.legend()
+#ax2.set_ylim(0,2)
+ax2.set_yticks([0,1,2],['0','1','2'])
+ax2.spines["top"].set_color("white")
+ax2.spines["bottom"].set_color("grey")
+ax2.spines["left"].set_color("grey")
+ax2.spines["right"].set_color("grey")
+bbox=dict(boxstyle="round", alpha=0.1, color='grey')
+left, bottom, width, height = (550, 0.25, 340, 1.65)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = False,
+                        color = "black",
+                        alpha = 0.3,
+                      #  facecolor = 'black'
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+ax22 = ax2.twinx()
+ax22.spines["top"].set_color("white")
+ax22.spines["bottom"].set_color("grey")
+ax22.spines["left"].set_color("grey")
+ax22.spines["right"].set_color("grey")
+ax22.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d18O")
+#ax22.invert_xaxis()
+ax22.invert_yaxis()
+#ax22.set_ylim(5.5,3)
+ax22.set_xlim(1267,410)
+ax22.set_yticks([6,5,4,3],['6','5','4','3'])
+plt.ylabel('d18O (LR04)')
+
+
+#1302 bottom plot
+ax3 = fig.add_subplot(3,1,3)
+ax3.spines["top"].set_color("white")
+ax3.spines["bottom"].set_color("grey")
+ax3.spines["left"].set_color("grey")
+ax3.spines["right"].set_color("grey")
+ax3.plot(ch1302a,ch1302os, color='black', marker = '.', linewidth=1,label = "1302")
+ax3.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)    
+#ax3.plot(ar1308a,ar1308os, color='black', linestyle = 'dashed', marker = '.', label = "Inverse Aqua Regia")
+plt.ylabel('187Os / 188Os')
+#ax3.legend()
+#ax3.get_xaxis().set_visible(False)
+#ax3.set_ylim(0,2.5)
+ax3.set_yticks([0,1,2,3],['0','1','2','3'])
+plt.xlabel('Age (ka)')
+bbox=dict(boxstyle="round", alpha=0.1, color='grey')
+ax33 = ax3.twinx()
+ax33.spines["top"].set_color("white")
+ax33.spines["bottom"].set_color("grey")
+ax33.spines["left"].set_color("grey")
+ax33.spines["right"].set_color("grey")
+ax33.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d18O")
+ax33.invert_yaxis()
+ax33.set_ylim(5.5,3)
+ax33.set_yticks([6,5,4,3],['6','5','4','3'])
+ax33.set_xlim(893,555)
+plt.ylabel('d18O (LR04)')
+
+
+
+######## first box lines
+con1 = ConnectionPatch(xyA=(1300, 5.25), coordsA=ax1.transData, 
+                       xyB=(1267, 2), coordsB=ax2.transData, color = 'black',alpha=0.3)
+# Add left side to the figure
+fig.add_artist(con1)
+con2 = ConnectionPatch(xyA=(500, 5.25), coordsA=ax1.transData, 
+                       xyB=(410, 2), coordsB=ax2.transData, color = 'black',alpha=0.3)
+# Add right side to the figure
+fig.add_artist(con2)
+
+######### Second boxlines
+con3 = ConnectionPatch(xyA=(889, 0.24), coordsA=ax2.transData, 
+                       xyB=(893, 3), coordsB=ax3.transData, color = 'black',alpha=0.3)
+# Add left side to the figure
+fig.add_artist(con3)
+con4 = ConnectionPatch(xyA=(550, 0.24), coordsA=ax2.transData, 
+                       xyB=(555, 3), coordsB=ax3.transData, color = 'black', alpha=0.3)
+# Add right side to the figure
+fig.add_artist(con4)
+
+fig.subplots_adjust(wspace=0.55, hspace=0.55)
+
+
+
+
