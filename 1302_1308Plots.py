@@ -14,6 +14,7 @@ from matplotlib import style
 from matplotlib.patches import ConnectionPatch
 import matplotlib.pyplot
 import numpy as np
+from matplotlib import gridspec
 
 data = "/Users/gryphengoss/Desktop/IODP_1302_1308/IODP-Master_Goss.xlsx"
 
@@ -29,12 +30,15 @@ ch1302 = IODPdata.parse("1302-Chromic")
 ar1308 = IODPdata.parse("1308-AquaR")
 ch1308 = IODPdata.parse("1308-Chromic")
 d18O = IODPdata.parse('d18O')
-newsamps = IODPdata.parse('Current_Requests')
+#newsamps = IODPdata.parse('Current_Requests')
+SLsheet = IODPdata.parse("SeaLevel")
+CO2sheet = IODPdata.parse("pCO2")
 
 #create variables
 #d18Oval = d18O.iloc[:,1] If the below line does work locate using integer position
 d18Oval = d18O['d18Ovalpm']
 d18Oage = d18O['d18O age']
+d18Oerr = d18O['error']
 
 ar1302a = ar1302['Age Increment']
 ar1302os = ar1302['187Os/188Os']
@@ -42,16 +46,28 @@ ch1302a = ch1302['Age Increment']
 ch1302os = ch1302['187Os/188Os']
 ch1302ppt = ch1302['192Os(ppt)']
 ch1308ppt = ch1308['192Os(ppt)']
+ch1302err =ch1302['OsError']
+ch1308err =ch1308['OsError']
 
 ar1308a = ar1308['Age Increment']
 ar1308os = ar1308['187Os/188Os']
 ch1308a = ch1308['Age Increment']
 ch1308os = ch1308['187Os/188Os']
 
-new1308os = newsamps['1308Placer']
-new1308a = newsamps['1308Age']
-new1302os = newsamps['1302Placer']
-new1302a = newsamps['1302Age']
+#new1308os = newsamps['1308Placer']
+#new1308a = newsamps['1308Age']
+#new1302os = newsamps['1302Placer']
+#new1302a = newsamps['1302Age']
+
+SLdata = SLsheet['SL']
+SLa = SLsheet['Time']
+SLup = SLsheet['SL_upper']
+SLlo = SLsheet['SL_lower']
+
+CO2data = CO2sheet['pCO2']
+CO2a = CO2sheet['Time']
+CO2up = CO2sheet['pCO2_upper']
+CO2lo =CO2sheet['pCO2_lower']
 
 
 #%% only 1302 and d18O
@@ -451,28 +467,24 @@ plt.gca().add_patch(rect4)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
 
-#%% failed attempt at ratio vs 192
-from numpy import mean
-from numpy import std
-from numpy.random import randn
-from numpy.random import seed
-from matplotlib import pyplot
-import numpy as np
-import scipy.stats
-from scipy.stats import pearsonr
-import seaborn as sns
+#%% Os ratio 
 
 x = 1/ch1302ppt
 y = ch1302os
 
+x.dropna(inplace=True)
+y.dropna(inplace=True)
 
-
-pyplot.scatter(x,y)
 z = np.polyfit(x, y, 1)
 p = np.poly1d(z)
-plt.plot(x,p(x),"b")
-pyplot.show()
+plt.plot(x,p(x),"r--", color='black')
+plt.scatter(x,y, color='white', marker = 'o', label = "1302", edgecolors='black')
+plt.xlabel('1 / 192Os')
+plt.ylabel('187Os / 188Os')
+plt.yticks([0,1,2,3],['0','1','2','3'])
+plt.xticks([.02,0.04,0.06,0.08,0.1],['0.02','0.04','0.06','0.08','0.1'])
 
+plt.show   
 
 
 #%% 1302 d18O separate plots red and blue
@@ -1145,6 +1157,431 @@ con4 = ConnectionPatch(xyA=(550, 0.24), coordsA=ax2.transData,
 fig.add_artist(con4)
 
 fig.subplots_adjust(wspace=0.55, hspace=0.55)
+
+#%% NEW 2 columns: 1302 SL Co2 D18O and 1308 ""
+
+fig = plt.figure(figsize=(5, 5))
+
+
+
+#1308
+ax2 = fig.add_subplot(2,1,1)
+ax2.plot(ch1308a,ch1308os, color='black', marker = '.', linewidth=1.5,label = "1308")
+ax2.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)  
+#ax2.plot(ar1302a,ar1302os, color='black', linestyle = 'dashed', marker = '.')
+#plt.ylabel('187Os / 188Os')
+#ax2.legend()
+#ax2.set_ylim(0,2)
+ax2.set_yticks([0,1,2],['0','1','2'])
+
+#bbox=dict(boxstyle="round", alpha=0.1, color='grey')
+#left, bottom, width, height = (550, 0.25, 340, 1.65)
+#rect4=mpatches.Rectangle((left,bottom),width,height, 
+#                        fill = False,
+#                        color = "black",
+#                        alpha = 0.3,
+                      #  facecolor = 'black'
+#                        linewidth = 1)
+#plt.gca().add_patch(rect4)
+ax22 = ax2.twinx()
+
+ax22.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d18O")
+ax22.invert_yaxis()
+ax22.set_ylim(5.5,3)
+ax22.set_xlim(1267,410)
+ax22.set_yticks([6,5,4,3],['6','5','4','3'])
+ax222 = ax2.twinx()
+ax222.spines['left'].set_position(('outward', 25))
+ax222.plot(SLa,SLdata, color='blue', marker = '', linewidth=0.5, label = "Sea Level")
+
+ax2222 = ax222.twinx()
+ax2222.spines['right'].set_position(('outward', 25))
+ax2222.plot(CO2a,CO2data, color='red', marker = '', linewidth=0.5, label = "pCO2")
+#plt.ylabel('d18O (LR04)')
+
+
+#1302 bottom plot
+ax3 = fig.add_subplot(2,1,2)
+ax3.plot(ch1302a,ch1302os, color='black', marker = '.', linewidth=1.5,label = "1302")
+ax3.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)    
+#plt.ylabel('187Os / 188Os')
+ax3.set_yticks([0,1,2,3],['0','1','2','3'])
+plt.xlabel('Age (ka)')
+
+ax33 = ax3.twinx()
+ax33.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d18O")
+ax33.invert_yaxis()
+ax33.set_ylim(5.5,3)
+ax33.set_yticks([6,5,4,3],['6','5','4','3'])
+ax33.set_xlim(893,555)
+#plt.ylabel('d18O (LR04)')
+
+ax333 = ax3.twinx()
+ax333.spines['left'].set_position(('outward', 25))
+ax333.plot(SLa,SLdata, color='blue', marker = '', linewidth=0.5, label = "Sea Level")
+
+ax3333 = ax333.twinx()
+ax3333.spines['right'].set_position(('outward', 25))
+ax3333.plot(CO2a,CO2data, color='red', marker = '', linewidth=0.5, label = "pCO2")
+
+
+#plt.ylabel('pCO2')
+
+
+
+######## first box lines
+
+
+######### Second boxlines
+#con3 = ConnectionPatch(xyA=(889, 0.24), coordsA=ax2.transData, 
+#                       xyB=(893, 3), coordsB=ax3.transData, color = 'black',alpha=0.3)
+# Add left side to the figure
+#fig.add_artist(con3)
+#con4 = ConnectionPatch(xyA=(550, 0.24), coordsA=ax2.transData, 
+#                       xyB=(555, 3), coordsB=ax3.transData, color = 'black', alpha=0.3)
+# Add right side to the figure
+#fig.add_artist(con4)
+
+fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+
+
+
+
+
+
+#%% small 1308 on top, big 1302 with sl, co2, d18O
+
+
+fig = plt.figure(figsize=(4, 7)) 
+gs = gridspec.GridSpec(5, 1, height_ratios=[3.5,3,3,3,3]) 
+
+#1308Plot
+ax0 = plt.subplot(gs[0])
+ax0.plot(ch1308a,ch1308os, color='black', marker = '.', linewidth=1.5,label = "1308")
+ax0.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)  
+ax0.set_yticks([0,1,2],['0','1','2'])
+plt.ylabel('187Os / 188Os')
+ax0.xaxis.set_ticks_position('top')
+
+
+ax00 = plt.subplot(gs[0])
+ax00 = ax0.twinx()
+ax00.invert_xaxis()
+ax00.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d18O")
+ax00.invert_yaxis()
+plt.ylabel('d18O (LR04)')
+ax00.set_ylim(5.8,3)
+ax00.set_xlim(445,1230)
+ax00.set_yticks([5.8,5,4,3],['','5','4','3'])
+#Grey showing time of next plot
+left, bottom, width, height = (570, 0, 320, 50)
+rect1=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        color = "grey",
+                        alpha = 0.2,
+                        facecolor = 'grey',
+                        linewidth = 2)
+plt.gca().add_patch(rect1)
+
+#41ky-bars
+left, bottom, width, height = (825, 5.5, 300, 0.02)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = True,
+                        color = "black",
+                        alpha = 1,
+                        facecolor = 'black',
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+ax00.text(920,5.4,'41 ky cycles',size=10)
+
+#100ky-bars
+left, bottom, width, height = (500, 5.5, 300, 0.02)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = True,
+                        color = "black",
+                        alpha = 1,
+                        facecolor = 'black',
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
+ax00.text(595,5.4,'100 ky cycles',size=10)
+
+
+
+#1302 Plot Osmium:
+ax1 = plt.subplot(gs[1])
+#ax1.plot(ch1302a,ch1302os, color='black', marker = '.', linewidth=1,label = "1302")
+ax1.errorbar(ch1302a, ch1302os, xerr = ch1302err, elinewidth = 1, capsize=10, color = 'black')
+ax1.invert_xaxis()
+font = {'family' : 'normal',
+        'size'   : 10}
+plt.rc('font', **font)    
+plt.ylabel('187Os / 188Os')
+ax1.set_yticks([0,1,2,3],['0','1','2',''])
+ax1.set_xlim(570,878)
+ax1.get_xaxis().set_visible(False)
+ax1.spines["top"].set_color("black")
+ax1.spines["bottom"].set_color("white")
+ax1.spines["left"].set_color("black")
+ax1.spines["right"].set_color("black")
+plt.xlabel('Age (ka)')
+#Warming in red, cooling in blue
+left, bottom, width, height = (600, 0, 30, 50)
+rect1=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect1)
+#Warming in red, cooling in blue
+left, bottom, width, height = (690, 0, 30, 50)
+rect2=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect2)
+#Warming in red, cooling in blue
+left, bottom, width, height = (770, 0, 30, 50)
+rect3=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect3)
+#Warming in red, cooling in blue
+left, bottom, width, height = (840, 0, 30, 50)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+
+#d18O
+ax11 = plt.subplot(gs[2])
+#ax11.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=1, label = "d18O")
+ax11.errorbar(d18Oage, d18Oval, xerr = d18Oerr, elinewidth = 1, capsize=10, color = 'grey')
+ax11.yaxis.set_ticks_position('right')
+ax11.yaxis.set_label_position("right")
+ax11.invert_yaxis()
+ax11.set_ylim(5.5,3)
+ax11.set_yticks([5.5,5,4,3],['','5','4','3'])
+ax11.set_xlim(570,878)
+ax11.get_xaxis().set_visible(False)
+ax11.spines["top"].set_color("white")
+ax11.spines["bottom"].set_color("white")
+ax11.spines["left"].set_color("black")
+ax11.spines["right"].set_color("black")
+plt.ylabel('d18O (LR04)')
+#Warming in red, cooling in blue
+left, bottom, width, height = (600, 0, 30, 50)
+rect1=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect1)
+#Warming in red, cooling in blue
+left, bottom, width, height = (690, 0, 30, 50)
+rect2=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect2)
+#Warming in red, cooling in blue
+left, bottom, width, height = (770, 0, 30, 50)
+rect3=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect3)
+#Warming in red, cooling in blue
+left, bottom, width, height = (840, 0, 30, 50)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+
+
+#Sea Level
+ax111 = plt.subplot(gs[3])
+ax111.plot(SLa,SLdata, color='blue', marker = '', linewidth=1, label = "Sea Level")
+#ax111.fill_between(x, SLup, SLlo)
+ax111.set_xlim(570,878)
+ax111.get_xaxis().set_visible(False)
+ax111.spines["top"].set_color("white")
+ax111.spines["bottom"].set_color("white")
+ax111.spines["left"].set_color("black")
+ax111.spines["right"].set_color("black")
+plt.ylabel('Global Mean Sea Level (m)')
+ax111.set_ylim(-120,0)
+#Warming in red, cooling in blue
+left, bottom, width, height = (600, 0, 30, -120)
+rect1=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect1)
+#Warming in red, cooling in blue
+left, bottom, width, height = (690, 0, 30, -120)
+rect2=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect2)#Warming in red, cooling in blue
+left, bottom, width, height = (770, 0, 30, -120)
+rect3=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect3)
+#Warming in red, cooling in blue
+left, bottom, width, height = (840, 0, 30, -120)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+
+ax111L = plt.subplot(gs[3])
+ax111L.plot(SLa,SLup, color='blue', marker = '', linewidth=0.5, label = "Sea Level")
+ax111L.set_xlim(570,878)
+ax111L.get_xaxis().set_visible(False)
+ax111L.spines["top"].set_color("white")
+ax111L.spines["bottom"].set_color("white")
+ax111L.spines["left"].set_color("black")
+ax111L.spines["right"].set_color("black")
+ax111L.set_ylim(-120,0)
+
+ax111u = plt.subplot(gs[3])
+ax111u.plot(SLa,SLlo, color='blue', marker = '', linewidth=0.5, label = "Sea Level")
+ax111u.set_xlim(570,878)
+ax111u.get_xaxis().set_visible(False)
+ax111u.spines["top"].set_color("white")
+ax111u.spines["bottom"].set_color("white")
+ax111u.spines["left"].set_color("black")
+ax111u.spines["right"].set_color("black")
+ax111u.set_ylim(-120,0)
+
+
+#pCO2
+ax1111 = plt.subplot(gs[4])
+ax1111.get_xaxis().set_visible(True)
+ax1111.set_xlim(570,878)
+ax1111.plot(CO2a,CO2data, color='red', marker = '', linewidth=1, label = "pCO2")
+ax1111.yaxis.set_ticks_position('right')
+ax1111.yaxis.set_label_position("right")
+ax1111.spines["top"].set_color("white")
+ax1111.spines["bottom"].set_color("black")
+ax1111.spines["left"].set_color("black")
+ax1111.spines["right"].set_color("black")
+plt.ylabel('pCO2 (ppmv)')
+ax1111.set_ylim(170,300)
+#Warming in red, cooling in blue
+left, bottom, width, height = (600, 170, 30, 300)
+rect1=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect1)
+#Warming in red, cooling in blue
+left, bottom, width, height = (690, 170, 30, 300)
+rect2=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect2)
+#Warming in red, cooling in blue
+left, bottom, width, height = (770, 170, 30, 300)
+rect3=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect3)
+#Warming in red, cooling in blue
+left, bottom, width, height = (840, 170, 30, 300)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.3,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+
+ax1111u = plt.subplot(gs[4])
+ax1111u.get_xaxis().set_visible(True)
+ax1111u.set_xlim(570,878)
+ax1111u.plot(CO2a,CO2up, color='red', marker = '', linewidth=0.5, label = "pCO2")
+ax1111u.yaxis.set_ticks_position('right')
+ax1111u.yaxis.set_label_position("right")
+ax1111u.spines["top"].set_color("white")
+ax1111u.spines["bottom"].set_color("black")
+ax1111u.spines["left"].set_color("black")
+ax1111u.spines["right"].set_color("black")
+ax1111u.set_ylim(170,300)
+
+ax1111L = plt.subplot(gs[4])
+ax1111L.get_xaxis().set_visible(True)
+ax1111L.set_xlim(570,878)
+ax1111L.plot(CO2a,CO2lo, color='red', marker = '', linewidth=0.5, label = "pCO2")
+ax1111L.yaxis.set_ticks_position('right')
+ax1111L.yaxis.set_label_position("right")
+ax1111L.spines["top"].set_color("white")
+ax1111L.spines["bottom"].set_color("black")
+ax1111L.spines["left"].set_color("black")
+ax1111L.spines["right"].set_color("black")
+ax1111L.set_ylim(170,300)
+
+
+
+
+
+fig.subplots_adjust(wspace=0, hspace=0)
+
+
+
+
+
+
+
+
+
 
 
 
