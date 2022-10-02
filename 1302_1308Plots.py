@@ -778,7 +778,10 @@ plt.gca().add_patch(rect4)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
 
-#%% Line d18O and scatter Os 1302 red and blue-overlayed
+
+
+
+#%% Line d18O and scatter Os 1302 red and blue-overlayed    ******
 #Line d18O and scatter Os 1302
 #Zones of red interglacial and blue glacial based on Os##################################
 
@@ -793,7 +796,7 @@ plt.rc('font', **font)
 plt.ylabel('d18O (LR04)')
 #plt.title('IODP Site 1302 - Osmium Signature')
 ax1.set_ylim(5.5, 3) 
-ax1.set_xlim(565,880) 
+ax1.set_xlim(480,880) 
 ax1.set_ylabel('d18O (LR04)')
 ax2.set_ylabel('187Os / 188Os')
 ax1.set_xlabel('Age (ka)')
@@ -801,7 +804,7 @@ ax1.set_xlabel('Age (ka)')
 
 
 #MIS labels
-ax1.text(600,3.45,'MIS 15',size=15)
+ax1.text(600,3.45,'15',size=15)
 ax1.text(630,5.15,'16',size=15)
 ax1.text(700,3.55,'17',size=15)
 ax1.text(720,4.85,'18',size=15)
@@ -811,7 +814,23 @@ ax1.text(862,3.45,'21',size=15)
 ax1.text(871,4.8,'22',size=15)
 
 #Warming in red, cooling in blue
-left, bottom, width, height = (565, 0, 19.5, 2.5)
+left, bottom, width, height = (480, 0, 55, 2.5)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.2,
+                        facecolor = 'red',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+left, bottom, width, height = (535, 0, 36, 2.5)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        #fill = False,
+                        #color = "purple",
+                        alpha = 0.2,
+                        facecolor = 'blue',
+                        linewidth = 2)
+plt.gca().add_patch(rect4)
+left, bottom, width, height = (571, 0, 14, 2.5)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
                         #fill = False,
                         #color = "purple",
@@ -935,6 +954,32 @@ plt.gca().add_patch(rect4)
 
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.show()
+
+#%% Line d18O and scatter Os 1303 red and blue-overlayed    -------
+#Line d18O and scatter Os 1302
+#Zones of red interglacial and blue glacial based on Os##################################
+
+ax1 = plt.subplot(111)
+ax1.plot(d18Oage,d18Oval, color='black', marker = '',linewidth=0.5, label = "d18O")
+ax2 = ax1.twinx()
+ax2.scatter(ch1308a,ch1308os, color='black', marker = 's', label = "1302")   
+ax2.set_ylim(0,2.5)
+font = {'family' : 'normal',
+        'size'   : 15}
+plt.rc('font', **font)
+plt.ylabel('d18O (LR04)')
+#plt.title('IODP Site 1302 - Osmium Signature')
+ax1.set_ylim(5.5, 3) 
+ax1.set_xlim(425,850) 
+ax1.set_ylabel('d18O (LR04)')
+ax2.set_ylabel('187Os / 188Os')
+ax1.set_xlabel('Age (ka)')
+
+
+
+
+plt.subplots_adjust(wspace=0, hspace=0)
+plt.show()
 #%% 5 columns: of d18o 1302 os/ppt and 1308 os/ppt
 
 ax1 = plt.subplot(151)
@@ -1032,14 +1077,6 @@ ax1.set_ylim(5.5, 2)
 ax1.invert_xaxis()
 ax1.set_xlim(2000,0) 
 bbox=dict(boxstyle="round", alpha=0.1, color='grey')
-left, bottom, width, height = (500, 5.25, 800, -2.3)
-rect4=mpatches.Rectangle((left,bottom),width,height, 
-                        fill = False,
-                        color = "black",
-                        alpha = 0.3,
-                      #  facecolor = 'black'
-                        linewidth = 1)
-plt.gca().add_patch(rect4)
 #41ky-bars
 left, bottom, width, height = (695, 2.5, 450, -0.1)
 rect4=mpatches.Rectangle((left,bottom),width,height, 
@@ -1060,6 +1097,14 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         linewidth = 1)
 plt.gca().add_patch(rect4)
 ax1.text(500,2.3,'100 ky cycles',size=12)
+left, bottom, width, height = (500, 5.25, 800, -2.3)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = False,
+                        color = "black",
+                        alpha = 0.3,
+                      #  facecolor = 'black'
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
 
 
 
@@ -1081,14 +1126,6 @@ ax2.spines["bottom"].set_color("grey")
 ax2.spines["left"].set_color("grey")
 ax2.spines["right"].set_color("grey")
 bbox=dict(boxstyle="round", alpha=0.1, color='grey')
-left, bottom, width, height = (550, 0.25, 340, 1.65)
-rect4=mpatches.Rectangle((left,bottom),width,height, 
-                        fill = False,
-                        color = "black",
-                        alpha = 0.3,
-                      #  facecolor = 'black'
-                        linewidth = 1)
-plt.gca().add_patch(rect4)
 ax22 = ax2.twinx()
 ax22.spines["top"].set_color("white")
 ax22.spines["bottom"].set_color("grey")
@@ -1101,6 +1138,14 @@ ax22.invert_yaxis()
 ax22.set_xlim(1267,410)
 ax22.set_yticks([6,5,4,3],['6','5','4','3'])
 plt.ylabel('d18O (LR04)')
+left, bottom, width, height = (480, 0.25, 340, 1.65)
+rect4=mpatches.Rectangle((left,bottom),width,height, 
+                        fill = False,
+                        color = "black",
+                        alpha = 0.3,
+                      #  facecolor = 'black'
+                        linewidth = 1)
+plt.gca().add_patch(rect4)
 
 
 #1302 bottom plot
@@ -1131,32 +1176,32 @@ ax33.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=0.5, label = "d1
 ax33.invert_yaxis()
 ax33.set_ylim(5.5,3)
 ax33.set_yticks([6,5,4,3],['6','5','4','3'])
-ax33.set_xlim(893,555)
+ax33.set_xlim(893,480)
 plt.ylabel('d18O (LR04)')
 
 
 
 ######## first box lines
-con1 = ConnectionPatch(xyA=(1300, 5.25), coordsA=ax1.transData, 
+#con1 = ConnectionPatch(xyA=(1300, 5.25), coordsA=ax1.transData, 
                        xyB=(1267, 2), coordsB=ax2.transData, color = 'black',alpha=0.3)
 # Add left side to the figure
-fig.add_artist(con1)
-con2 = ConnectionPatch(xyA=(500, 5.25), coordsA=ax1.transData, 
+#fig.add_artist(con1)
+#con2 = ConnectionPatch(xyA=(500, 5.25), coordsA=ax1.transData, 
                        xyB=(410, 2), coordsB=ax2.transData, color = 'black',alpha=0.3)
 # Add right side to the figure
-fig.add_artist(con2)
+#fig.add_artist(con2)
 
 ######### Second boxlines
-con3 = ConnectionPatch(xyA=(889, 0.24), coordsA=ax2.transData, 
+#con3 = ConnectionPatch(xyA=(889, 0.24), coordsA=ax2.transData, 
                        xyB=(893, 3), coordsB=ax3.transData, color = 'black',alpha=0.3)
 # Add left side to the figure
-fig.add_artist(con3)
-con4 = ConnectionPatch(xyA=(550, 0.24), coordsA=ax2.transData, 
+#fig.add_artist(con3)
+#con4 = ConnectionPatch(xyA=(550, 0.24), coordsA=ax2.transData, 
                        xyB=(555, 3), coordsB=ax3.transData, color = 'black', alpha=0.3)
 # Add right side to the figure
-fig.add_artist(con4)
+#fig.add_artist(con4)
 
-fig.subplots_adjust(wspace=0.55, hspace=0.55)
+#fig.subplots_adjust(wspace=0.55, hspace=0.55)
 
 #%% NEW 2 columns: 1302 SL Co2 D18O and 1308 ""
 
@@ -1284,13 +1329,13 @@ ax00.set_ylim(5.8,3)
 ax00.set_xlim(445,1230)
 ax00.set_yticks([5.8,5,4,3],['','5','4','3'])
 #Grey showing time of next plot
-left, bottom, width, height = (570, 0, 320, 50)
+left, bottom, width, height = (570, 3.2, 320, 2.5)
 rect1=mpatches.Rectangle((left,bottom),width,height, 
-                        #fill = False,
-                        color = "grey",
-                        alpha = 0.2,
-                        facecolor = 'grey',
-                        linewidth = 2)
+                        fill = False,
+                        color = "black",
+                        #alpha = 0.2,
+                        facecolor = 'black',
+                        linewidth = 1.5)
 plt.gca().add_patch(rect1)
 
 #41ky-bars
@@ -1314,13 +1359,17 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         linewidth = 1)
 plt.gca().add_patch(rect4)
 ax00.text(595,5.4,'100 ky cycles',size=10)
+ax00.text(455,3.7,'A',size=20)
+ax00.text(580,3.82,'B',size=17)
+ax1.text(580,3.9,'B',size=20)
 
 
 
 #1302 Plot Osmium:
 ax1 = plt.subplot(gs[1])
-#ax1.plot(ch1302a,ch1302os, color='black', marker = '.', linewidth=1,label = "1302")
-ax1.errorbar(ch1302a, ch1302os, xerr = ch1302err, elinewidth = 1, capsize=10, color = 'black')
+ax1.text(575,2.1,'B',size=20)
+ax1.plot(ch1302a,ch1302os, color='black', marker = '.', linewidth=1,label = "1302")
+#ax1.errorbar(ch1302a, ch1302os, xerr = ch1302err, elinewidth = 1, capsize=10, color = 'black')
 ax1.invert_xaxis()
 font = {'family' : 'normal',
         'size'   : 10}
@@ -1373,8 +1422,8 @@ plt.gca().add_patch(rect4)
 
 #d18O
 ax11 = plt.subplot(gs[2])
-#ax11.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=1, label = "d18O")
-ax11.errorbar(d18Oage, d18Oval, xerr = d18Oerr, elinewidth = 1, capsize=10, color = 'grey')
+ax11.plot(d18Oage,d18Oval, color='grey', marker = '', linewidth=1, label = "d18O")
+#ax11.errorbar(d18Oage, d18Oval, xerr = d18Oerr, elinewidth = 1, capsize=10, color = 'grey')
 ax11.yaxis.set_ticks_position('right')
 ax11.yaxis.set_label_position("right")
 ax11.invert_yaxis()
@@ -1423,6 +1472,13 @@ rect4=mpatches.Rectangle((left,bottom),width,height,
                         facecolor = 'red',
                         linewidth = 2)
 plt.gca().add_patch(rect4)
+ax11.text(579.5,3.5,'MIS 15',size=10)
+ax11.text(614,5,'16',size=10)
+ax11.text(685,3.5,'17',size=10)
+ax11.text(731,5,'18',size=10)
+ax11.text(768,3.5,'19',size=10)
+ax11.text(784,5,'20',size=10)
+ax11.text(839,3.5,'21',size=10)
 
 
 #Sea Level
@@ -1573,6 +1629,7 @@ ax1111L.set_ylim(170,300)
 
 
 fig.subplots_adjust(wspace=0, hspace=0)
+
 
 
 
